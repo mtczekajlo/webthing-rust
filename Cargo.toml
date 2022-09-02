@@ -21,7 +21,7 @@ libmdns = { version = "0.6", optional = true }
 openssl = { version = "0.10", optional = true }
 serde_json = "1.0"
 uuid = { version = "1.0", features = ["v4"] }
-valico = "3.5"
+valico = { git = "https://github.com/mtczekajlo/valico", branch = "minimize-chrono-features" }
 
 [dev-dependencies]
 actix-rt = "2.6"
