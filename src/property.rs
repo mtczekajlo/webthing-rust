@@ -1,6 +1,8 @@
 use serde_json;
 use serde_json::json;
 use std::marker::{Send, Sync};
+
+#[cfg(feature = "json-validator")]
 use valico::json_schema;
 
 /// Used to forward a new property value to the physical/virtual device.
@@ -14,6 +16,7 @@ pub trait Property: Send + Sync {
     /// Validate new property value before setting it.
     ///
     /// Returns a result indicating validity.
+    #[cfg(feature = "json-validator")]
     fn validate_value(&self, value: &serde_json::Value) -> Result<(), &'static str> {
         let mut description = self.get_metadata();
         description.remove("@type");
@@ -39,6 +42,14 @@ pub trait Property: Send + Sync {
             }
             Err(_) => Err("Invalid property schema"),
         }
+    }
+
+    /// Validate new property value before setting it.
+    ///
+    /// Returns always Ok(()) with json-validator disabled.
+    #[cfg(not(feature = "json-validator"))]
+    fn validate_value(&self, _value: &serde_json::Value) -> Result<(), &'static str> {
+        Ok(())
     }
 
     /// Get the property description.

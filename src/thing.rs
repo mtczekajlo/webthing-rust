@@ -5,6 +5,8 @@ use std::collections::HashMap;
 use std::marker::{Send, Sync};
 use std::sync::{Arc, RwLock};
 use std::vec::Drain;
+
+#[cfg(feature = "json-validator")]
 use valico::json_schema;
 
 use super::action::Action;
@@ -850,6 +852,7 @@ impl AvailableAction {
     /// Validate the input for a new action.
     ///
     /// Returns a boolean indicating validation success.
+    #[cfg(feature = "json-validator")]
     fn validate_action_input(&self, input: Option<&serde_json::Value>) -> bool {
         let mut scope = json_schema::Scope::new();
         let validator = if let Some(input) = self.metadata.get("input") {
@@ -879,6 +882,11 @@ impl AvailableAction {
             },
             None => true,
         }
+    }
+
+    #[cfg(not(feature = "json-validator"))]
+    fn validate_action_input(&self, _input: Option<&serde_json::Value>) -> bool {
+        true
     }
 }
 
